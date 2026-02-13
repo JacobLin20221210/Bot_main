@@ -1,0 +1,46 @@
+{
+  "accuracy": 0.9630996309963099,
+  "cascade_enabled": true,
+  "cascade_stage2_weight": 0.95,
+  "competition_score": 205.0,
+  "f1": 0.9152542372881356,
+  "fn": 9.0,
+  "fp": 1.0,
+  "heldout_dataset_id": "32",
+  "margin": 0.005,
+  "precision": 0.9818181818181818,
+  "recall": 0.8571428571428571,
+  "selected_candidate_name": "transfer_en_source_only_v1",
+  "selected_components": [
+    {
+      "kind": "bot_ensemble",
+      "model": "rfet_recall",
+      "params": {
+        "calibration_cv": 3,
+        "et_bot_weight": 1.45,
+        "et_estimators": 1300,
+        "min_samples_leaf": 2,
+        "rf_bot_weight": 1.35,
+        "rf_estimators": 950
+      },
+      "weight": 0.5
+    },
+    {
+      "kind": "text_lr",
+      "model": "text_lr_balanced",
+      "params": {
+        "bot_weight": 1.15,
+        "c": 1.0,
+        "char_max_features": 18000,
+        "word_max_features": 12000
+      },
+      "weight": 0.5
+    }
+  ],
+  "shortlist_coverage_train_mean": 0.28181818181818186,
+  "shortlist_threshold": 0.2,
+  "threshold": 0.35625,
+  "tn": 207.0,
+  "tp": 54.0,
+  "train_dataset_ids": "30"
+}

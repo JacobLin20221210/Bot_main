@@ -1,0 +1,197 @@
+{
+  "cascade": {
+    "enabled": false,
+    "shortlist_coverage_train_mean": 1.0,
+    "shortlist_threshold": 0.0,
+    "stage2_weight": 1.0
+  },
+  "config_id": "transfer_en_best_v5_llm_semantic_tuned",
+  "config_selection": {
+    "bias_safe": true,
+    "protocol": "source_only",
+    "selection_metric": "worst_train_oof_score_then_mean_then_lower_fp_with_simplicity",
+    "source_run_id": "20260207-051503-24d4f07cf8-heavy-en-noboosters"
+  },
+  "contrastive_calibration": {
+    "c": 1.2,
+    "configured": true,
+    "cross_fit_folds": 5,
+    "cross_fit_total_seed_count": 7,
+    "cross_fit_used_seed_count": 7,
+    "enabled": true,
+    "hard_fraction": 0.14,
+    "hard_negative_center": 0.2023265143823743,
+    "hard_positive_center": 0.3930353648192692,
+    "hard_weight": 3.25,
+    "min_samples": 24
+  },
+  "datasets": [
+    "30",
+    "32"
+  ],
+  "evaluation_protocol": "fixed_config_strict_transfer_holdout",
+  "language": "en",
+  "margin": 0.01,
+  "negatives": 417,
+  "positives": 129,
+  "samples": 546,
+  "seed": 42,
+  "selection_bias_risk": "low",
+  "source_selection_summary": {
+    "applied_threshold": 0.3325,
+    "margin": 0.01,
+    "mean_accuracy": 0.976975405546834,
+    "mean_precision": 0.9463488425334355,
+    "mean_score": 474.14285714285717,
+    "mean_tp": 123.42857142857143,
+    "seed_count": 7,
+    "threshold": 0.3225,
+    "total_candidate_count": 7985,
+    "total_fp": 49.0,
+    "used_fallback": false,
+    "valid_candidate_count": 7124,
+    "worst_score": 462.0
+  },
+  "strict_outer_leave_one_dataset_out": {
+    "folds": [
+      {
+        "accuracy": 0.9630996309963099,
+        "cascade_enabled": false,
+        "cascade_stage2_weight": 1.0,
+        "competition_score": 223.0,
+        "contrastive_calibration_enabled": true,
+        "contrastive_hard_negative_center": 0.2352261833106919,
+        "contrastive_hard_positive_center": 0.36316714466071576,
+        "f1": 0.923076923076923,
+        "fn": 3.0,
+        "fp": 7.0,
+        "heldout_dataset_id": "32",
+        "margin": 0.01,
+        "metrics_path": "output\\experiments\\20260212-122555-cc18e39f44-current-analysis\\languages\\en\\holdout\\train_30__test_32\\metrics.json",
+        "model_path": "output\\experiments\\20260212-122555-cc18e39f44-current-analysis\\languages\\en\\holdout\\train_30__test_32\\model.pkl",
+        "precision": 0.8955223880597015,
+        "recall": 0.9523809523809523,
+        "selected_candidate_name": "transfer_en_best_v5_llm_semantic_tuned",
+        "selected_components": [
+          {
+            "kind": "bot_ensemble",
+            "model": "rfet_balanced",
+            "params": {
+              "calibration_cv": 3,
+              "et_bot_weight": 1.3,
+              "et_estimators": 1200,
+              "min_samples_leaf": 2,
+              "rf_bot_weight": 1.2,
+              "rf_estimators": 900
+            },
+            "weight": 0.75
+          },
+          {
+            "kind": "tab_lr",
+            "model": "tab_lr_c1",
+            "params": {
+              "bot_weight": 1.2,
+              "c": 1.0
+            },
+            "weight": 0.05
+          },
+          {
+            "kind": "llm_semantic_lr",
+            "model": "llm_semantic_balanced",
+            "params": {
+              "bot_weight": 1.2,
+              "c": 1.1,
+              "embedding_model_name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+            },
+            "weight": 0.2
+          }
+        ],
+        "shortlist_coverage_train_mean": 1.0,
+        "shortlist_threshold": 0.0,
+        "threshold": 0.2475,
+        "tn": 201.0,
+        "tp": 60.0,
+        "train_dataset_ids": "30"
+      },
+      {
+        "accuracy": 0.9709090909090909,
+        "cascade_enabled": false,
+        "cascade_stage2_weight": 1.0,
+        "competition_score": 248.0,
+        "contrastive_calibration_enabled": true,
+        "contrastive_hard_negative_center": 0.23144492496017507,
+        "contrastive_hard_positive_center": 0.26780485177100577,
+        "f1": 0.9428571428571428,
+        "fn": 0.0,
+        "fp": 8.0,
+        "heldout_dataset_id": "30",
+        "margin": 0.01,
+        "metrics_path": "output\\experiments\\20260212-122555-cc18e39f44-current-analysis\\languages\\en\\holdout\\train_32__test_30\\metrics.json",
+        "model_path": "output\\experiments\\20260212-122555-cc18e39f44-current-analysis\\languages\\en\\holdout\\train_32__test_30\\model.pkl",
+        "precision": 0.8918918918918919,
+        "recall": 1.0,
+        "selected_candidate_name": "transfer_en_best_v5_llm_semantic_tuned",
+        "selected_components": [
+          {
+            "kind": "bot_ensemble",
+            "model": "rfet_balanced",
+            "params": {
+              "calibration_cv": 3,
+              "et_bot_weight": 1.3,
+              "et_estimators": 1200,
+              "min_samples_leaf": 2,
+              "rf_bot_weight": 1.2,
+              "rf_estimators": 900
+            },
+            "weight": 0.75
+          },
+          {
+            "kind": "tab_lr",
+            "model": "tab_lr_c1",
+            "params": {
+              "bot_weight": 1.2,
+              "c": 1.0
+            },
+            "weight": 0.05
+          },
+          {
+            "kind": "llm_semantic_lr",
+            "model": "llm_semantic_balanced",
+            "params": {
+              "bot_weight": 1.2,
+              "c": 1.1,
+              "embedding_model_name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+            },
+            "weight": 0.2
+          }
+        ],
+        "shortlist_coverage_train_mean": 1.0,
+        "shortlist_threshold": 0.0,
+        "threshold": 0.2425,
+        "tn": 201.0,
+        "tp": 66.0,
+        "train_dataset_ids": "32"
+      }
+    ],
+    "summary": {
+      "mean_accuracy": 0.9670043609527004,
+      "mean_competition_score": 235.5,
+      "mean_f1": 0.932967032967033,
+      "mean_fn": 1.5,
+      "mean_fp": 7.5,
+      "mean_precision": 0.8937071399757968,
+      "mean_recall": 0.9761904761904762,
+      "pooled_accuracy": 0.967032967032967,
+      "pooled_competition_score": 471.0,
+      "pooled_f1": 0.9333333333333332,
+      "pooled_fn": 3.0,
+      "pooled_fp": 15.0,
+      "pooled_precision": 0.8936170212765957,
+      "pooled_recall": 0.9767441860465116,
+      "pooled_tn": 402.0,
+      "pooled_tp": 126.0
+    }
+  },
+  "threshold": 0.3225,
+  "training_mode": "best_config"
+}

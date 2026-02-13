@@ -1,0 +1,12 @@
+{
+  "experiment_dir": "/Users/q/Desktop/projects/bot-or-not/output/experiments/20260210-191820-cc18e39f44-holdout-eval",
+  "external_dir": "/Users/q/Desktop/projects/bot-or-not/dataset_external",
+  "final_models_dir": "/Users/q/Desktop/projects/bot-or-not/output/models",
+  "lang_filter": "en",
+  "max_datasets": 1,
+  "selected_dataset_keys": [
+    "FSF"
+  ],
+  "skipped": [],
+  "sort_by": "name"
+}

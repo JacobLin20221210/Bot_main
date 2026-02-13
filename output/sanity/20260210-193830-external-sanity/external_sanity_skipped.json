@@ -1,0 +1,8 @@
+{
+  "experiment_dir": "/Users/q/Desktop/projects/bot-or-not/output/experiments/20260210-191820-cc18e39f44-holdout-eval",
+  "external_dir": "/private/tmp/bot_or_not_sanity_smoke",
+  "final_models_dir": "/Users/q/Desktop/projects/bot-or-not/output/models",
+  "lang_filter": "all",
+  "max_datasets": 1,
+  "skipped": []
+}

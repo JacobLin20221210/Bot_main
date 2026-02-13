@@ -1,0 +1,47 @@
+{
+  "en": {
+    "config_id": "transfer_en_en-deep07-cal-mild",
+    "components": [
+      {
+        "model": "rfet_balanced",
+        "weight": 0.75
+      },
+      {
+        "model": "tab_lr_c1",
+        "weight": 0.05
+      },
+      {
+        "model": "llm_semantic_balanced",
+        "weight": 0.2
+      }
+    ],
+    "selection": {
+      "threshold_step": 0.0025,
+      "robust_seed_count": 7,
+      "robust_seed_stride": 53,
+      "use_contrastive_calibration": true,
+      "min_precision_grid": [
+        0.72,
+        0.78,
+        0.84,
+        0.9,
+        0.92,
+        0.94
+      ],
+      "margin_grid": [
+        0.0,
+        0.0025,
+        0.005,
+        0.01,
+        0.015
+      ],
+      "max_fp_rate": -1.0,
+      "contrastive_calibration": {
+        "hard_fraction": 0.12,
+        "hard_weight": 2.75,
+        "c": 1.0,
+        "min_samples": 24
+      }
+    }
+  }
+}
