@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 from src.cli.predict_args import parse_args
-from src.prediction.engine import run_prediction
+from src.prediction.engine import execute_bot_prediction
 
 
 def main(argv: list[str] | None = None) -> None:
     """Main entry point for prediction."""
     args = parse_args(argv)
-    run_prediction(args)
+    execute_bot_prediction(args)
 
 
 if __name__ == "__main__":

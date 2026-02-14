@@ -1,108 +1,175 @@
 # Bot or Not (bon)
 
-This repository contains code and experiments for the "Bot or Not" (bon) challenge: an author-level bot detection system for social media posts. The project trains models using engineered features and embeddings, runs predictions on held-out/test sets, and provides evaluation utilities and configuration overrides used during research experiments.
+Bot or Not is an author-level bot detector for social media posts.
 
-## Quick overview
+You give it a dataset (posts + user metadata).  
+It extracts features (hand-crafted + embeddings).  
+It trains one or more models.  
+It outputs a `detections.*.txt` file you can score against gold labels.
 
-- **Train models:** feature extraction, candidate generation, and training pipelines under `src/training`.
-- **Predict:** a prediction engine that loads trained models and runs batched inference (`predict.py`, `src/prediction/engine.py`).
-- **Evaluate:** utilities to compute metrics and calibration (`src/evaluation/metrics.py`, `calc_scores.py`, `validate_predictions.py`).
+---
 
-## Repository layout
+## What you can do with this repo
 
-- `dataset/` — input datasets (posts, users, bot labels) used for experiments.
-- `src/` — core implementation:
-  - `src/features/` — feature and embedding extraction.
-  - `src/training/` — training pipeline, candidate selection, holdout/OOF logic.
-  - `src/models/` — model interfaces, calibration, cascade/ensemble wrappers.
-  - `src/prediction/` — prediction engine and wrappers for model inference.
-  - `src/evaluation/` — metrics and scoring code.
-  - `src/data/loader.py` — dataset loading and preprocessing helpers.
-- `output/` — experiment outputs and saved detections, models, and caches.
-- `overrides/` — experiment-specific configuration sweeps and overrides.
-- CLI entrypoints: `train.py`, `predict.py`, `main.py`, `research.py` for orchestrating experiments.
+1. Train a model (and save artifacts)
+2. Predict bots on a dataset
+3. Score predictions against ground truth
 
-## Installation
+---
 
-This project uses the Python tooling described in `pyproject.toml`. Create a virtual environment and install dependencies:
+## Repo layout
+
+- `dataset/`  
+  Input datasets (posts, users, bot labels)
+
+- `src/`  
+  Core code
+  - `src/features/` — feature + embedding extraction
+  - `src/training/` — folds, holdout/OOF logic, candidate selection, training pipeline
+  - `src/models/` — model wrappers, calibration, cascades/ensembles
+  - `src/prediction/` — prediction engine (loads models and runs batched inference)
+  - `src/evaluation/` — metrics and scoring helpers
+  - `src/data/loader.py` — dataset loading/parsing
+
+- `output/`  
+  Everything produced by runs (models, metrics, caches, detections)
+
+- `overrides/`  
+  Experiment configs and sweeps used for research runs
+
+Entry scripts:
+- `train.py` — training pipeline  
+- `predict.py` — inference/prediction  
+- `calc_scores.py` — scoring  
+- `validate_predictions.py` — output sanity checks  
+- `main.py`, `research.py` — orchestration / experiments  
+
+---
+
+## Setup
+
+Create a virtual environment and install in editable mode:
 
 ```bash
 python -m venv .venv
 source .venv/Scripts/activate    # Windows: .venv\Scripts\activate
 pip install -U pip
-pip install -e .                # installs package in editable mode using pyproject.toml
+pip install -e .
 ```
 
-If you use Poetry or another tool, follow the standard steps for that tool instead.
+If you use Poetry or another tool, follow the normal steps for that tool.
 
-## Quickstart: training, prediction, evaluation
+---
 
-- Train a model (example):
+## Quickstart
+
+### 1) Train
 
 ```bash
 python train.py --config path/to/config.yaml
 ```
 
-- Run predictions on a dataset:
+This writes:
+- model artifacts under `output/models/`
+- metrics reports under `output/`
+
+### 2) Predict
 
 ```bash
-python predict.py --input dataset/posts&users.31.json --output output/detections.31.txt --model-dir output/models/
+python predict.py \
+  --input dataset/posts&users.31.json \
+  --output output/detections.31.txt \
+  --model-dir output/models/
 ```
 
-- Score predictions:
+### 3) Score + validate
 
 ```bash
 python calc_scores.py --pred output/detections.31.txt --gold dataset/dataset.bots.31.txt
 python validate_predictions.py --pred output/detections.31.txt
 ```
 
-See `src/cli/` for argument parsers used by the command-line scripts.
+---
 
-## How the code works (high level)
+## How it works (high level)
 
-- Feature extraction: `src/features` computes hand-crafted features and loads precomputed embeddings from `output/cache/embeddings/`.
-- Training pipeline: `src/training/core.py` and `src/training/pipeline.py` orchestrate data folds, candidate selection (`candidates.py`), and model fitting. Holdout and OOF (out-of-fold) predictions are supported for robust evaluation.
-- Models: `src/models` exposes abstractions for classifiers, calibration components (`calibration.py`), cascades and ensembles that combine multiple model outputs.
-- Prediction engine: `src/prediction/engine.py` loads a model or ensemble and applies it to a stream of author-level features, batching and caching embeddings for efficiency.
-- Evaluation: `src/evaluation/metrics.py` contains metric implementations used to score submissions; scripts compute and write human-readable reports to `output/`.
+1. **Load dataset**  
+   `src/data/loader.py` parses `posts&users.*.json` into the internal format.
 
-## Configs and overrides
+2. **Build features**  
+   `src/features/` computes engineered features and loads embeddings from cache.  
+   Embeddings are typically stored under `output/cache/embeddings/`.
 
-Experiment configuration is kept in YAML/JSON configs loaded by the training and research entrypoints. Use the `overrides/` directory to reproduce particular sweeps or calibration runs. The code supports runtime overrides so you can change thresholds, model paths, and feature flags without changing code.
+3. **Train**  
+   `src/training/core.py` and `src/training/pipeline.py` orchestrate:
+   - folds
+   - candidate selection (`candidates.py`)
+   - model fitting
+   - holdout and OOF predictions for robust evaluation
 
-## Data format
+4. **Model composition**  
+   `src/models/` contains:
+   - base model interfaces
+   - calibration (`calibration.py`)
+   - cascades / ensembles that blend multiple model outputs
 
-- `dataset/posts&users.*.json` — JSON files combining posts and user metadata; loaders in `src/data/loader.py` parse these into the in-memory structures used by pipelines.
-- `dataset/dataset.bots.*.txt` — ground-truth labels used for scoring.
+5. **Predict**  
+   `src/prediction/engine.py` loads the trained artifacts and runs batched inference.  
+   It also handles embedding caching for speed.
 
-Note: File naming conventions used in `output/` mirror the dataset versions (e.g., `.31.` suffix).
-
-## Outputs
-
-- Model artifacts and metrics saved to `output/models/` and `output/*metrics.json`.
-- Prediction outputs (detections) are placed in `output/` with filenames like `detections.31.txt` or `detections.en.30.txt`.
-
-## Development notes
-
-- To trace experiments recreate the `overrides/` used for a given `output/` run.
-- The codebase aims to separate feature computation from model logic so features can be reused across model types.
-- If you add new features, update `src/features/__init__.py` and ensure embeddings are cached to `output/cache/embeddings/` for repeatable runs.
-
-## Running tests and static checks
-
-There are no formal test suites in the repository root, but you can run quick checks by executing small scripts and verifying outputs. Consider adding `pytest` tests under `tests/` for future CI.
-
-## Where to look next
-
-- `src/training` — understand how experiments are wired together.
-- `src/prediction/engine.py` — follow the prediction path used at inference time.
-- `calc_scores.py` and `validate_predictions.py` — how outputs are scored and validated.
-
-If you'd like, I can:
-- add runnable examples for a single-mini experiment;
-- create a `requirements.txt` or lockfile for reproducible installs;
-- add a CONTRIBUTING section and developer setup instructions.
+6. **Evaluate**  
+   `src/evaluation/metrics.py` implements the metrics used by scoring scripts.
 
 ---
 
-Updated README to explain project purpose, layout, and how to run core actions.
+## Data format
+
+- `dataset/posts&users.*.json`  
+  JSON combining posts + user metadata for a dataset version.
+
+- `dataset/dataset.bots.*.txt`  
+  Gold labels used for scoring.
+
+Naming convention: dataset versions usually show up as a suffix like `.31.`.
+
+---
+
+## Outputs
+
+- `output/models/`  
+  Saved model artifacts.
+
+- `output/*metrics.json` (and similar)  
+  Run summaries and evaluation outputs.
+
+- `output/detections.*.txt`  
+  Final prediction files (what you score / submit).
+
+---
+
+## Reproducing experiments
+
+Most runs are driven by YAML/JSON configs.  
+Look in `overrides/` for known settings and sweep configs.
+
+Tip: if you’re trying to reproduce an old run, start from the override used for it,  
+then rerun training and prediction with the same dataset version.
+
+---
+
+## Extending the project
+
+Adding new features:
+- implement them in `src/features/`
+- wire them into `src/features/__init__.py`
+- cache heavy embedding work under `output/cache/embeddings/` so reruns stay fast
+
+---
+
+## Where to look next
+
+If you’re new to the codebase:
+
+1. `src/training/` — how experiments are wired
+2. `src/prediction/engine.py` — inference path
+3. `calc_scores.py` and `validate_predictions.py` — scoring rules + format checks

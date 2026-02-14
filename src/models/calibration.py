@@ -86,7 +86,7 @@ class HardNegativeCalibrator:
         probs = np.asarray(probabilities, dtype=float)
         if not self.enabled or self.model is None:
             return np.clip(probs, 0.0, 1.0)
-        x = self._feature_matrix(probs)
+        x = self._extract_features(probs)
         return self.model.predict_proba(x)[:, 1]
 
 
